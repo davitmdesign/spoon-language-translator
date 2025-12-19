@@ -245,7 +245,7 @@
           <div>
             <label for="input">Eingabe</label>
             <textarea id="input" placeholder="Zum Beispiel: Hallo Welt"></textarea>
-            <div class="hint">Vokale: a, e, i, o, u, ä, ö, ü, y</div>
+            <div class="hint" id="modeHint">Vokale: a, e, i, o, u, ä, ö, ü, y</div>
           </div>
           <div>
             <label for="output">Ausgabe</label>
@@ -263,6 +263,7 @@
     <script>
       const input = document.getElementById("input");
       const output = document.getElementById("output");
+      const modeHint = document.getElementById("modeHint");
       const toggles = document.querySelectorAll(".toggle");
 
       const vowelRegex = /[aeiouyäöüAEIOUYÄÖÜ]/g;
@@ -289,9 +290,11 @@
         if (mode === "to") {
           input.placeholder = "Zum Beispiel: Hallo Welt";
           output.placeholder = "Dein Löffeltext erscheint hier";
+          modeHint.textContent = "Vokale: a, e, i, o, u, ä, ö, ü, y";
         } else {
           input.placeholder = "Zum Beispiel: hallewelewlewo";
           output.placeholder = "Der Klartext erscheint hier";
+          modeHint.textContent = "Rückweg: entfernt „lew“ + folgenden Vokal.";
         }
         update();
       }
