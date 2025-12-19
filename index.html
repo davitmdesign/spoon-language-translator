@@ -115,6 +115,29 @@
         z-index: 1;
       }
 
+      .controls {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
+
+      .toggle {
+        border: 1px solid rgba(18, 17, 24, 0.15);
+        background: #fff;
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.2s ease, border 0.2s ease;
+      }
+
+      .toggle.active {
+        border-color: rgba(255, 107, 53, 0.6);
+        box-shadow: 0 10px 20px rgba(255, 107, 53, 0.18);
+        transform: translateY(-1px);
+      }
+
       label {
         font-weight: 600;
         display: inline-block;
@@ -214,6 +237,10 @@
       </header>
 
       <section class="panel fade-in delay-1">
+        <div class="controls">
+          <button class="toggle active" type="button" data-mode="to">Zu Löffel</button>
+          <button class="toggle" type="button" data-mode="from">Zurück</button>
+        </div>
         <div class="grid">
           <div>
             <label for="input">Eingabe</label>
@@ -236,8 +263,12 @@
     <script>
       const input = document.getElementById("input");
       const output = document.getElementById("output");
+      const toggles = document.querySelectorAll(".toggle");
 
       const vowelRegex = /[aeiouyäöüAEIOUYÄÖÜ]/g;
+      const spoonRegex = /([aeiouyäöüAEIOUYÄÖÜ])(?:lew|Lew)[aeiouyäöüAEIOUYÄÖÜ]/g;
+
+      let mode = "to";
 
       function toSpoon(text) {
         return text.replace(vowelRegex, (match) => {
@@ -246,9 +277,32 @@
         });
       }
 
-      function update() {
-        output.value = toSpoon(input.value);
+      function fromSpoon(text) {
+        return text.replace(spoonRegex, "$1");
       }
+
+      function setMode(nextMode) {
+        mode = nextMode;
+        toggles.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.mode === mode);
+        });
+        if (mode === "to") {
+          input.placeholder = "Zum Beispiel: Hallo Welt";
+          output.placeholder = "Dein Löffeltext erscheint hier";
+        } else {
+          input.placeholder = "Zum Beispiel: hallewelewlewo";
+          output.placeholder = "Der Klartext erscheint hier";
+        }
+        update();
+      }
+
+      function update() {
+        output.value = mode === "to" ? toSpoon(input.value) : fromSpoon(input.value);
+      }
+
+      toggles.forEach((btn) => {
+        btn.addEventListener("click", () => setMode(btn.dataset.mode));
+      });
 
       input.addEventListener("input", update);
       update();
